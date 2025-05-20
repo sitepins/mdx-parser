@@ -54,9 +54,8 @@ export default defineConfig({
   },
   plugins: [
     dts({
-      insertTypesEntry: true,
       include: ["src"],
-      rollupTypes: true,
+      exclude: ["src/__test__"],
     }),
   ],
   assetsInclude: ["**/*.md"],
