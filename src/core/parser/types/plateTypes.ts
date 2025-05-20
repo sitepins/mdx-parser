@@ -100,12 +100,6 @@ export type TableElement = {
   props: Record<string, unknown>;
 };
 
-export type MermaidElement = {
-  type: "mermaid";
-  value: string;
-  children: [EmptyTextElement];
-};
-
 export type BlockElement =
   | BlockquoteElement
   | CodeBlockElement
@@ -117,7 +111,6 @@ export type BlockElement =
   | ListItemElement
   | MdxBlockElement
   | ParagraphElement
-  | MermaidElement
   | OrderedListElement
   | UnorderedListElement
   | TableCellElement

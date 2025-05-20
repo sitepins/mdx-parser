@@ -6,7 +6,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: "src/index.ts",
-      name: "sitepins-mdx",
+      name: "@sitepins/mdx-parser",
       fileName: (format) => {
         if (format === "es") return "index.mjs";
         if (format === "cjs") return "index.js";

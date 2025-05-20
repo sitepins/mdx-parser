@@ -82,12 +82,6 @@ export const convertBlockElement = (
           imageUrlMapper
         ),
       };
-    case "mermaid":
-      return {
-        type: "code",
-        lang: "mermaid",
-        value: plateBlock.value,
-      };
     case "code_block":
       return {
         type: "code",

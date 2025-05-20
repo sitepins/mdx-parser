@@ -249,21 +249,9 @@ export const remarkToSlate = (
   };
 
   // Parse code block or mermaid block
-  const parseCode = (
-    node: Md.Code
-  ): Plate.CodeBlockElement | Plate.MermaidElement => {
-    if (node.lang === "mermaid") {
-      return mermaid(node);
-    }
+  const parseCode = (node: Md.Code): Plate.CodeBlockElement => {
     return code(node);
   };
-
-  // Convert mermaid code block
-  const mermaid = (node: Md.Code): Plate.MermaidElement => ({
-    type: "mermaid",
-    value: node.value,
-    children: [createEmptyTextElement()],
-  });
 
   // Convert code block
   const code = (node: Md.Code): Plate.CodeBlockElement => {

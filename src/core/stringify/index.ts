@@ -1,3 +1,9 @@
+/**
+ * @file MDX Stringification Module
+ * @description This module provides utilities for converting Plate editor content to MDX/Markdown.
+ * It handles various block elements, inline formatting, shortcodes, and custom directives.
+ */
+
 export * from "./handlers";
 export * from "./lib/elements";
 export * from "./lib/stringifyMDX";
@@ -20,6 +26,9 @@ import { processInlineNodes as serializeInlineElements } from "./markdownMarksHa
 import { serializeProps as serializeMdxProps } from "./mdxAttributeSerializer";
 import { stringifyShortcode as serializeShortcode } from "./shortcodeStringifier";
 
+/**
+ * Define MDX JSX element types in mdast module
+ */
 declare module "mdast" {
   interface StaticPhrasingContentMap {
     mdxJsxTextElement: MdxJsxTextElement;
@@ -36,6 +45,31 @@ declare module "mdast" {
   }
 }
 
+/**
+ * Pattern definition for shortcode processing
+ * @interface
+ */
+export type ShortcodePattern = {
+  /** Starting delimiter for the shortcode */
+  start: string;
+  /** Ending delimiter for the shortcode */
+  end: string;
+  /** Identifier name for the shortcode */
+  name: string;
+  /** Associated template name */
+  templateName: string;
+  /** Node type - either block level or leaf node */
+  type: "block" | "leaf";
+};
+
+/**
+ * Converts Plate editor content to MDX string format
+ * @param rootElement - Root element from Plate editor
+ * @param richTextField - Rich text field configuration
+ * @param mapImageUrl - Function to transform image URLs
+ * @returns Stringified MDX content or undefined if input is invalid
+ * @throws Error if input is a string instead of an object
+ */
 export const stringifyMDX = (
   rootElement: Plate.RootElement,
   richTextField: RichTextField,
@@ -72,14 +106,12 @@ export const stringifyMDX = (
   return processedMarkdown;
 };
 
-export type ShortcodePattern = {
-  start: string;
-  end: string;
-  name: string;
-  templateName: string;
-  type: "block" | "leaf";
-};
-
+/**
+ * Converts mdast tree to Sitepins markdown format
+ * @param mdastTree - mdast syntax tree to convert
+ * @param richTextType - Rich text configuration
+ * @returns Markdown string with Sitepins extensions
+ */
 export const convertToSitepinsMarkdown = (
   mdastTree: Md.Root,
   richTextType: RichTextType
@@ -135,6 +167,13 @@ export const convertToSitepinsMarkdown = (
   });
 };
 
+/**
+ * Creates mdast root node from Plate editor content
+ * @param plateRoot - Plate editor root element
+ * @param richTextType - Rich text configuration
+ * @param mapImageUrl - URL transformation function
+ * @returns mdast root node containing the converted content
+ */
 export const createMdastRoot = (
   plateRoot: Plate.RootElement,
   richTextType: RichTextType,
@@ -154,6 +193,15 @@ export const createMdastRoot = (
   };
 };
 
+/**
+ * Converts various types of Plate block elements to mdast content nodes
+ * Handles headings, paragraphs, code blocks, tables, lists, etc.
+ * @param plateBlock - The block element to convert
+ * @param richTextType - Rich text configuration
+ * @param mapImageUrl - URL transformation function
+ * @returns mdast content node or null for empty blocks
+ * @throws Error for unsupported block types
+ */
 export const convertBlockElement = (
   plateBlock: Plate.BlockElement,
   richTextType: RichTextType,
@@ -200,12 +248,6 @@ export const convertBlockElement = (
           richTextType,
           mapImageUrl
         ),
-      };
-    case "mermaid":
-      return {
-        type: "code",
-        lang: "mermaid",
-        value: plateBlock.value,
       };
     case "code_block":
       return {
@@ -418,8 +460,16 @@ const convertBlockContentElement = (
   }
 };
 
+/**
+ * Text formatting marks that can be applied to inline elements
+ */
 export type TextMark = "strong" | "emphasis" | "inlineCode" | "delete";
 
+/**
+ * Extracts formatting marks from Plate inline elements
+ * @param inlineElement - The inline element to analyze
+ * @returns Array of text marks (bold, italic, code, strikethrough)
+ */
 export const getTextMarks = (inlineElement: Plate.InlineElement) => {
   const marks: TextMark[] = [];
   if (inlineElement.type !== "text") {

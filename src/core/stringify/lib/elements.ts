@@ -27,7 +27,7 @@ export const rootElement = (
 
 /**
  * Converts a Plate.BlockElement to an Mdast Content node.
- * Handles headings, paragraphs, mermaid/code blocks, and ignores empty paragraphs.
+ * Handles headings, paragraphs, code blocks, and ignores empty paragraphs.
  */
 export const blockElement = (
   plateBlock: Plate.BlockElement,
@@ -75,12 +75,6 @@ export const blockElement = (
           richTextField,
           imageUrlMapper
         ),
-      };
-    case "mermaid":
-      return {
-        type: "code",
-        lang: "mermaid",
-        value: plateBlock.value,
       };
     case "code_block":
       return {
