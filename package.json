@@ -89,5 +89,18 @@
     "react": {
       "optional": true
     }
-  }
+  },
+  "keywords": [
+    "sitepins",
+    "remark",
+    "remark-plugin",
+    "plugin",
+    "mdast",
+    "markdown",
+    "slate",
+    "plate",
+    "RTE",
+    "text editor",
+    "plate markdown"
+  ]
 }
