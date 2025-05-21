@@ -1,37 +1,45 @@
 {
-  "name": "root",
-  "private": true,
-  "workspaces": [
-    "packages/*"
+  "name": "@sitepins/mdx",
+  "version": "0.1.0",
+  "typings": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "package.json",
+    "dist"
   ],
-  "packageManager": "yarn@1.22.22",
-  "license": "MIT",
-  "author": "Sitepins",
-  "description": "A parser for MDX, a markdown format with JSX support, built on top of remark and micromark.",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/sitepins/mdx-parser.git"
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
   },
-  "bugs": {
-    "url": "https://github.com/sitepins/mdx-parser/issues"
+  "buildConfig": {
+    "entryPoints": [
+      {
+        "name": "src/index.ts",
+        "target": "node",
+        "bundleDeps": true
+      }
+    ]
   },
-  "homepage": "https://github.com/sitepins/mdx-parser#readme",
   "scripts": {
-    "dev": "turbo run dev:pkg --filter=./packages/mdx-parser",
-    "build": "turbo run build --filter=\"./packages/**\"",
-    "test": "vitest run --silent",
-    "types": "turbo run types --filter=\"./packages/**\"",
-    "build:e2e": "pnpm run build && pnpm --filter=kitchen-sink-starter run build",
-    "test:dev": "cd playwright/tina-playwright && npx playwright test --ui",
-    "test:e2e": "cd playwright/tina-playwright && npx playwright test",
-    "version": "pnpm exec changeset version",
-    "version:snapshot": "pnpm exec changeset version --snapshot",
-    "publish": "pnpm publish -r --no-git-checks --access public && pnpm exec changeset tag",
-    "publish:beta": "pnpm publish -r --tag beta --no-git-checks --access public",
-    "publish:dev": "pnpm publish -r --tag dev --no-git-checks --access public",
-    "push-tags": "pnpm exec changeset tag && git pull && git push --follow-tags",
-    "lint": "biome lint ./packages",
-    "format": "biome format --write ./packages/"
+    "types:build": "tsc --emitDeclarationOnly",
+    "build:pkg": "tsup src/index.ts --format cjs,esm --dts",
+    "test:run": "vitest run --silent",
+    "test:watch": "vitest watch",
+    "coverage:run": "vitest run --coverage",
+    "dev:pkg": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "clean:build": "rm -rf dist",
+    "types": "turbo run types:build",
+    "build": "turbo run build:pkg",
+    "test": "turbo run test:run",
+    "coverage": "turbo run coverage:run",
+    "dev": "turbo run dev:pkg",
+    "clean": "turbo run clean:build"
   },
   "dependencies": {
     "acorn": "8.8.2",

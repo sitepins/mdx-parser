@@ -1,0 +1,14 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build:pkg",
+      "type": "shell",
+      "command": "yarn",
+      "args": ["build:pkg"],
+      "group": "build",
+      "problemMatcher": ["$tsc"],
+      "isBackground": false
+    }
+  ]
+}
