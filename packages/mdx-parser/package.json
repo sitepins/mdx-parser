@@ -28,7 +28,8 @@
   "scripts": {
     "test": "vitest run",
     "coverage": "vitest run --coverage",
-    "test-watch": "vitest"
+    "test-watch": "vitest",
+    "build": "vite build"
   },
   "dependencies": {
     "acorn": "8.8.2",

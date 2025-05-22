@@ -1,4 +1,4 @@
-import { parseMDX } from "@sitepins/mdx";
+import { parseMDX } from "@sitepins/mdx-parser";
 import fs from "fs";
 import path from "path";
 
@@ -16,7 +16,7 @@ export default async function MdxPage() {
       type: "rich-text",
       templates: [],
     },
-    (src) => src
+    (src: string) => src
   );
 
   return (
