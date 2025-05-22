@@ -1,20 +1,19 @@
 {
-  "name": "@sitepins/mdx",
+  "name": "@sitepins/mdx-parser",
   "version": "0.1.0",
   "typings": "dist/index.d.ts",
   "main": "dist/index.js",
+  "browser": "dist/index.browser.mjs",
   "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
   "files": [
     "package.json",
     "dist"
   ],
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "browser": "./dist/index.browser.mjs",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "default": "./dist/index.js"
+      "require": "./dist/index.js"
     }
   },
   "buildConfig": {
@@ -27,19 +26,9 @@
     ]
   },
   "scripts": {
-    "types:build": "tsc --emitDeclarationOnly",
-    "build:pkg": "tsup src/index.ts --format cjs,esm --dts",
-    "test:run": "vitest run --silent",
-    "test:watch": "vitest watch",
-    "coverage:run": "vitest run --coverage",
-    "dev:pkg": "tsup src/index.ts  --format cjs,esm --dts --watch",
-    "clean:build": "rm -rf dist",
-    "types": "turbo run types:build",
-    "build": "turbo run build:pkg",
-    "test": "turbo run test:run",
-    "coverage": "turbo run coverage:run",
-    "dev": "turbo run dev:pkg",
-    "clean": "turbo run clean:build"
+    "test": "vitest run",
+    "coverage": "vitest run --coverage",
+    "test-watch": "vitest"
   },
   "dependencies": {
     "acorn": "8.8.2",
