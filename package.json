@@ -32,11 +32,7 @@
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
     "dev": "vite build --watch",
-    "clean": "rm -rf dist",
-    "publish": "npm publish -r --no-git-checks --access public && npm exec changeset tag",
-    "publish:beta": "npm publish -r --tag beta --no-git-checks --access public",
-    "publish:dev": "npm publish -r --tag dev --no-git-checks --access public",
-    "push-tags": "npm exec changeset tag && git pull && git push --follow-tags"
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "acorn": "8.8.2",
