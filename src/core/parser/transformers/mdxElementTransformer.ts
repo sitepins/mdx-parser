@@ -1,4 +1,4 @@
-import { convertToSitepinsMarkdown } from "@/core/stringify";
+import { toTinaMarkdown } from "@/core/stringify";
 import type { RichTextType } from "@/types";
 import { ContainerDirective } from "mdast-util-directive";
 import { LeafDirective } from "mdast-util-directive/lib";
@@ -43,7 +43,7 @@ function fallbackToHtmlElement(
   mdxNode: MdxJsxTextElement | MdxJsxFlowElement,
   richTextField: RichTextType
 ): Plate.HTMLElement | Plate.HTMLInlineElement {
-  const markdown = convertToSitepinsMarkdown(
+  const markdown = toTinaMarkdown(
     { type: "root", children: [mdxNode] },
     richTextField
   );

@@ -1,5 +1,5 @@
-import { parseMDX } from "@/core/parser";
-import { stringifyMDX } from "@/core/stringify";
+import { parseMDX } from "@/next/parse";
+import { stringifyMDX } from "@/next/stringify";
 import { expect, it } from "vitest";
 import * as util from "../../util";
 import { field } from "./field";

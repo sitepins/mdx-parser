@@ -30,7 +30,7 @@ export interface BaseField {
 }
 
 export interface SitepinsField extends BaseField {
-  type: "string" | "number" | "boolean" | "object" | "array";
+  type: "string" | "number" | "boolean" | "object" | "array" | "rich-text";
   isTitle?: boolean;
   isBody?: boolean;
   options?: Option[];

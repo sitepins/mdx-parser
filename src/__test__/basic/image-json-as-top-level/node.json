@@ -24,10 +24,10 @@
     {
       "type": "p",
       "children": [
-            {
-              "type": "text",
-              "text": ""
-            }
+        {
+          "type": "text",
+          "text": ""
+        }
       ]
     }
   ]

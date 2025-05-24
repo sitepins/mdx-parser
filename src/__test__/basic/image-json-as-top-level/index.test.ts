@@ -1,4 +1,4 @@
-import { stringifyMDX } from "@/core/stringify";
+import { stringifyMDX } from "@/next/stringify";
 import { expect, it } from "vitest";
 import * as util from "../../util";
 import { field } from "./field";

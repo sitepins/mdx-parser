@@ -1,7 +1,7 @@
-import type * as Plate from "@/core/parser/types/plateTypes";
+import type * as Plate from "@/core/parser/types";
 import { RichTextField } from "@/types";
-import { toMdRoot } from "./ast-transformer";
-import { toSitepinsMarkdown } from "./markdown-renderer";
+import { preProcess } from "./jsx-attribute-processor";
+import { toTinaMarkdown } from "./markdown-renderer";
 
 export const stringifyMDX = (
   value: Plate.RootElement,
@@ -11,6 +11,6 @@ export const stringifyMDX = (
   if (!value) {
     return;
   }
-  const mdTree = toMdRoot(value, field, imageCallback);
-  return toSitepinsMarkdown(mdTree, field);
+  const mdTree = preProcess(value, field, imageCallback);
+  return toTinaMarkdown(mdTree, field);
 };

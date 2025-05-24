@@ -1,4 +1,4 @@
-import type { Paragraph } from "mdast";
+import type { BlockContent, DefinitionContent, Paragraph } from "mdast";
 import { ConstructName } from "mdast-util-directive/lib";
 import type {
   Options as ToMarkdownExtension,
@@ -10,156 +10,14 @@ import { containerFlow } from "mdast-util-to-markdown/lib/util/container-flow";
 import { containerPhrasing } from "mdast-util-to-markdown/lib/util/container-phrasing";
 import { track } from "mdast-util-to-markdown/lib/util/track";
 import { stringifyEntitiesLight } from "stringify-entities";
-import { DirectiveTypes } from "./constants";
-import type { Directive, DirectivePattern } from "./types";
-import { getPatternName, isInlineDirectiveLabel } from "./utils";
+import { Pattern } from "../../stringify";
+import type { Directive, LeafDirective, TextDirective } from "./types";
 
-// Extends the ToMarkdownHandle interface to optionally include a peek method
-interface ExtendedToMarkdownHandle extends ToMarkdownHandle {
-  peek?: () => string;
-}
+const own = {}.hasOwnProperty;
 
-// Options for the directive handler, including node, pattern, state, and tracker
-interface DirectiveHandlerOptions {
-  node: Directive;
-  pattern: DirectivePattern;
-  state: State;
-  tracker: ReturnType<typeof track>;
-}
-
-// Formats directive attributes as a string for markdown output
-const formatAttributes = (node: Directive, state: State): string => {
-  const quote = checkQuote(state);
-  const subset =
-    node.type === DirectiveTypes.TEXT ? [quote] : [quote, "\n", "\r"];
-  const attrs = node.attributes || {};
-
-  const quoted = (key: string, value: string) => {
-    const v = quote + stringifyEntitiesLight(value, { subset }) + quote;
-    return key === "_value" ? v : `${key}${value ? "=" + v : ""}`;
-  };
-
-  return Object.entries(attrs)
-    .filter(([_, value]) => value != null)
-    .map(([key, value]) => quoted(key, String(value)))
-    .join(" ")
-    .concat(Object.keys(attrs).length ? " " : "");
-};
-
-// Handles rendering of directive labels (e.g., [label]) in markdown
-const handleLabel = ({
-  node,
-  state,
-  tracker,
-  value,
-}: DirectiveHandlerOptions & { value: string }) => {
-  const label = node as unknown as Paragraph;
-  if (!label?.children?.length) return value;
-
-  const exit = state.enter("label");
-  const labelType = `${node.type}Label` as ConstructName;
-  const subexit = state.enter(labelType);
-
-  value += tracker.move("[");
-  value += tracker.move(
-    containerPhrasing(label, state, {
-      ...tracker.current(),
-      before: value,
-      after: "]",
-    })
-  );
-  value += tracker.move("]");
-
-  subexit();
-  exit();
-  return value;
-};
-
-// Handles rendering of container directive content in markdown
-const handleContainerContent = ({
-  node,
-  state,
-  tracker,
-  value,
-}: DirectiveHandlerOptions & { value: string }) => {
-  if (node.type !== DirectiveTypes.CONTAINER) return value;
-
-  const [head, ...rest] = node.children || [];
-  const shallow = isInlineDirectiveLabel(head)
-    ? { ...node, children: rest }
-    : node;
-
-  if (shallow?.children?.length) {
-    value += tracker.move("\n");
-    value += tracker.move(containerFlow(shallow, state, tracker.current()));
-  }
-
-  return value;
-};
-
-// Main handler for converting directives to markdown using provided patterns
-const createDirectiveMarkdownHandler =
-  (directivePatterns: DirectivePattern[]): ExtendedToMarkdownHandle =>
-  (directiveNode, _, markdownState, safeOptions) => {
-    const positionTracker = track(safeOptions);
-    const exitDirective = markdownState.enter(directiveNode.type);
-
-    const matchedPattern = directivePatterns.find(
-      (pattern) =>
-        pattern.name === directiveNode.name ||
-        pattern.templateName === directiveNode.name
-    );
-
-    if (!matchedPattern) {
-      console.warn("No pattern found for directive:", directiveNode.name);
-      exitDirective();
-      return "";
-    }
-
-    const resolvedPatternName = getPatternName(
-      matchedPattern.name,
-      matchedPattern.templateName
-    );
-    let markdownValue = positionTracker.move(
-      `${matchedPattern.start} ${resolvedPatternName}`
-    );
-
-    markdownValue = handleLabel({
-      node: directiveNode,
-      pattern: matchedPattern,
-      state: markdownState,
-      tracker: positionTracker,
-      value: markdownValue,
-    });
-    markdownValue += positionTracker.move(" ");
-    markdownValue += positionTracker.move(
-      formatAttributes(directiveNode, markdownState)
-    );
-    markdownValue += positionTracker.move(matchedPattern.end);
-
-    markdownValue = handleContainerContent({
-      node: directiveNode,
-      pattern: matchedPattern,
-      state: markdownState,
-      tracker: positionTracker,
-      value: markdownValue,
-    });
-
-    if (directiveNode.type === DirectiveTypes.CONTAINER) {
-      markdownValue += positionTracker.move(`\n${matchedPattern.start}`);
-      markdownValue += positionTracker.move(
-        ` /${resolvedPatternName} ${matchedPattern.end}`
-      );
-    }
-
-    exitDirective();
-    return markdownValue;
-  };
-
-// Exports the sitepinsShortcodesToMarkdown extension for mdast-util-to-markdown
-export const sitepinsShortcodesToMarkdown = (
-  patterns: DirectivePattern[]
-): ToMarkdownExtension => ({
+export const directiveToMarkdown: (
+  patterns: Pattern[]
+) => ToMarkdownExtension = (patterns) => ({
   unsafe: [
     {
       character: "\r",
@@ -178,8 +36,136 @@ export const sitepinsShortcodesToMarkdown = (
     { atBreak: true, character: ":", after: ":" },
   ],
   handlers: {
-    [DirectiveTypes.CONTAINER]: createDirectiveMarkdownHandler(patterns),
-    [DirectiveTypes.LEAF]: createDirectiveMarkdownHandler(patterns),
-    [DirectiveTypes.TEXT]: createDirectiveMarkdownHandler(patterns),
+    containerDirective: handleDirective(patterns),
+    leafDirective: handleDirective(patterns),
+    textDirective: handleDirective(patterns),
   },
 });
+
+const handleDirective: (patterns: Pattern[]) => ToMarkdownHandle = function (
+  patterns
+) {
+  const handleDirective: ToMarkdownHandle = function (
+    node,
+    _,
+    state,
+    safeOptions
+  ) {
+    const tracker = track(safeOptions);
+    const exit = state.enter(node.type);
+    const pattern = patterns.find(
+      (p) => p.name === node.name || p.templateName === node.name
+    );
+    if (!pattern) {
+      console.log("no pattern found for directive", node.name);
+      exit();
+      return "";
+    }
+    const patternName = pattern.name || pattern.templateName;
+
+    const sequence = pattern.start;
+    let value = tracker.move(sequence + " " + patternName);
+    let label: Paragraph | LeafDirective | TextDirective | undefined;
+
+    if (label && label.children && label.children.length > 0) {
+      const exit = state.enter("label");
+      const labelType = `${node.type}Label` as ConstructName;
+      const subexit = state.enter(labelType);
+      value += tracker.move("[");
+      value += tracker.move(
+        containerPhrasing(label, state, {
+          ...tracker.current(),
+          before: value,
+          after: "]",
+        })
+      );
+      value += tracker.move("]");
+      subexit();
+      exit();
+    }
+
+    value += tracker.move(" ");
+    value += tracker.move(attributes(node, state));
+    value += tracker.move(pattern.end);
+
+    if (node.type === "containerDirective") {
+      const head = (node.children || [])[0];
+      let shallow = node;
+
+      if (inlineDirectiveLabel(head)) {
+        shallow = Object.assign({}, node, { children: node.children.slice(1) });
+      }
+
+      if (shallow && shallow.children && shallow.children.length > 0) {
+        value += tracker.move("\n");
+        value += tracker.move(containerFlow(shallow, state, tracker.current()));
+      }
+
+      value += tracker.move("\n" + sequence);
+      value += tracker.move(" /" + patternName + " " + pattern.end);
+    }
+
+    exit();
+    return value;
+  };
+
+  // @ts-ignore Property does not exist on type Handle
+  // Not sure what this does!
+  handleDirective.peek = peekDirective;
+  return handleDirective;
+};
+
+/** @type {ToMarkdownHandle} */
+function peekDirective() {
+  return ":";
+}
+
+/**
+ * @param {Directive} node
+ * @param {State} state
+ * @returns {string}
+ */
+function attributes(node: Directive, state: State): string {
+  const quote = checkQuote(state);
+  const subset = node.type === "textDirective" ? [quote] : [quote, "\n", "\r"];
+  const attrs = node.attributes || {};
+  const values: string[] = [];
+  let key: string;
+
+  for (key in attrs) {
+    if (
+      own.call(attrs, key) &&
+      attrs[key] !== undefined &&
+      attrs[key] !== null
+    ) {
+      const value = String(attrs[key]);
+
+      values.push(quoted(key, value));
+    }
+  }
+
+  return values.length > 0 ? values.join(" ") + " " : "";
+
+  /**
+   * @param {string} key
+   * @param {string} value
+   * @returns {string}
+   */
+  function quoted(key: string, value: string) {
+    const v = quote + stringifyEntitiesLight(value, { subset }) + quote;
+    if (key === "_value") {
+      return v;
+    }
+    return key + (value ? "=" + v : "");
+  }
+}
+
+/**
+ * @param {BlockContent | DefinitionContent} node
+ * @returns {node is Paragraph & {data: {directiveLabel: boolean}}}
+ */
+function inlineDirectiveLabel(node: BlockContent | DefinitionContent) {
+  return Boolean(
+    node && node.type === "paragraph" && node.data && node.data.directiveLabel
+  );
+}

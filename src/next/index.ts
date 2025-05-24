@@ -1,2 +1,2 @@
-export { parseMDX } from "./parse/mdxParser";
+export { parseMDX } from "./parse";
 export { stringifyMDX } from "./stringify";

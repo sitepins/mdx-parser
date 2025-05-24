@@ -1,4 +1,4 @@
-import type { RichTextField } from "@/types";
+import { RichTextField } from "@/types";
 import * as acorn from "acorn";
 import { fromMarkdown as mdastFromMarkdown } from "mdast-util-from-markdown";
 import { gfmFromMarkdown } from "mdast-util-gfm";
@@ -6,22 +6,24 @@ import { gfm } from "micromark-extension-gfm";
 import type { Options } from "../shortcodes";
 import { mdxJsx } from "../shortcodes";
 import { mdxJsxFromMarkdown } from "../shortcodes/mdast";
-import { extractPatternsFromField } from "../util";
+import { getFieldPatterns } from "../util";
 
-export function fromMarkdown(markdown: string, field: RichTextField) {
-  const patterns = extractPatternsFromField(field);
-  const acornParser = acorn as Options["acorn"];
-
-  return mdastFromMarkdown(markdown, {
+export const fromMarkdown = (value: string, field: RichTextField) => {
+  const patterns = getFieldPatterns(field);
+  const acornDefault = acorn as unknown as Options["acorn"];
+  const skipHTML = false;
+  // if (field.parser?.type === 'markdown') {
+  //   if (['all', 'html'].includes(field.parser?.skipEscaping || '')) {
+  //     skipHTML = true
+  //   }
+  // }
+  const tree = mdastFromMarkdown(value, {
     extensions: [
       gfm(),
-      mdxJsx({
-        acorn: acornParser,
-        patterns,
-        addResult: true,
-        skipHTML: false,
-      }),
+      mdxJsx({ acorn: acornDefault, patterns, addResult: true, skipHTML }),
     ],
     mdastExtensions: [gfmFromMarkdown(), mdxJsxFromMarkdown({ patterns })],
   });
-}
+
+  return tree;
+};
