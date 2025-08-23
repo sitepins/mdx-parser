@@ -115,6 +115,7 @@ export const parseMDX = (
 
     return { type: "root", children: [] };
   } catch (e: any) {
+    console.log(e);
     if (e instanceof RichTextParseError) {
       return invalidMarkdown(e, value);
     }

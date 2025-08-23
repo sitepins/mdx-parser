@@ -3,6 +3,14 @@ import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 
 export default defineConfig({
+  plugins: [
+    dts({
+      insertTypesEntry: true,
+      rollupTypes: false,
+      copyDtsFiles: true,
+      include: ["src/**/*.ts", "src/**/*.d.ts"],
+    }),
+  ],
   build: {
     lib: {
       entry: "src/index.ts",
@@ -10,10 +18,9 @@ export default defineConfig({
       fileName: (format) => {
         if (format === "es") return "index.mjs";
         if (format === "cjs") return "index.js";
-        if (format === "umd") return "index.browser.mjs";
         return "index.js";
       },
-      formats: ["es", "cjs", "umd"],
+      formats: ["es", "cjs"],
     },
     rollupOptions: {
       external: [
@@ -52,12 +59,6 @@ export default defineConfig({
     sourcemap: true,
     minify: false,
   },
-  plugins: [
-    dts({
-      include: ["src"],
-      exclude: ["src/__test__"],
-    }),
-  ],
   assetsInclude: ["**/*.md"],
   resolve: {
     alias: {

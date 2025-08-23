@@ -99,6 +99,85 @@ const output = stringifyMDX(
   (imageUrl: string) => string
   ```
 
+## Usage in React Applications
+
+This library works in both Node.js and React environments. For React applications, the library automatically uses the browser-optimized bundle.
+
+### React Usage Example
+
+```typescript
+import { parseMDX } from "@sitepins/mdx-parser";
+
+function MyComponent() {
+  const [parsedContent, setParsedContent] = useState(null);
+
+  useEffect(() => {
+    const field = {
+      name: "body",
+      type: "rich-text",
+      parser: { type: "markdown", skipEscaping: "html" },
+      templates: [
+        {
+          name: "Alert",
+          label: "Alert Box",
+          match: {
+            start: "{{<",
+            name: "alert",
+            end: ">}}",
+          },
+          fields: [
+            {
+              name: "type",
+              label: "Alert Type",
+              type: "string",
+            },
+            {
+              name: "children",
+              label: "Content",
+              type: "rich-text",
+            },
+          ],
+        },
+      ],
+    };
+
+    try {
+      const result = parseMDX(
+        `# Welcome to My App
+        
+        This is some **bold** text and *italic* text.
+        
+        {{< alert type="info" >}}
+        This is an informational alert!
+        {{< /alert >}}`,
+        field,
+        (imageUrl) => `/images/${imageUrl}`
+      );
+      
+      setParsedContent(result);
+    } catch (error) {
+      console.error("Failed to parse MDX:", error);
+    }
+  }, []);
+
+  return (
+    <div>
+      <h1>Parsed Content</h1>
+      <pre>{JSON.stringify(parsedContent, null, 2)}</pre>
+    </div>
+  );
+}
+```
+
+### Build Variants
+
+The library provides two build variants:
+
+1. **Node.js/ESM/CJS** (`index.mjs`, `index.js`) - For server-side usage with external dependencies
+2. **Browser/React** (`index.browser.js`) - For client-side usage with bundled dependencies
+
+The browser bundle automatically includes all necessary dependencies, making it perfect for React applications.
+
 #### stringifyMDX(rootElement, richTextField, mapImageUrl)
 - `rootElement`: (Plate.RootElement) The AST to convert back to MDX
 - `richTextField`: (RichTextField) Configuration object:
