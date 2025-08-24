@@ -23,7 +23,80 @@ yarn add @sitepins/mdx-parser
 pnpm add @sitepins/mdx-parser
 ```
 
-### 2. Basic Usage
+### 2. Development Setup with Yarn Link
+
+When developing or testing this package locally, you can use `yarn link` to create a symbolic link between your local development version and other projects.
+
+#### Linking the Package (Development Mode)
+
+1. **In the package directory** (this repository):
+   ```bash
+   # Navigate to the package directory
+   cd /path/to/mdx-parser
+   
+   # Create a global link
+   yarn link
+   ```
+
+2. **In your project directory** (where you want to use the linked package):
+   ```bash
+   # Navigate to your project
+   cd /path/to/your-project
+   
+   # Link to the globally linked package
+   yarn link @sitepins/mdx-parser
+   ```
+
+#### Unlinking the Package
+
+When you're done testing or want to use the published version:
+
+1. **In your project directory**:
+   ```bash
+   # Unlink the package
+   yarn unlink @sitepins/mdx-parser
+   
+   # Reinstall the published version
+   yarn add @sitepins/mdx-parser
+   ```
+
+2. **In the package directory** (optional):
+   ```bash
+   # Remove the global link
+   yarn unlink
+   ```
+
+#### Alternative: Using npm link
+
+If you prefer npm, you can use `npm link` instead:
+
+```bash
+# In the package directory
+npm link
+
+# In your project directory
+npm link @sitepins/mdx-parser
+
+# To unlink
+npm unlink @sitepins/mdx-parser
+npm install @sitepins/mdx-parser
+```
+
+#### Benefits of Yarn Link
+
+- **Real-time testing**: Changes in the package are immediately available in linked projects
+- **Development workflow**: Test fixes and features without publishing
+- **Debugging**: Easier to debug issues in the context of real usage
+- **Performance**: No need to rebuild and reinstall after every change
+
+#### Important Notes
+
+- **Global scope**: `yarn link` creates a global symbolic link, so be careful with package names
+- **Version conflicts**: Linked packages might have different dependency versions
+- **Build process**: Make sure to build the package (`yarn build`) before testing
+- **Cleanup**: Always unlink when done to avoid confusion
+
+### 3. Basic Usage
 
 The library exports two main functions: `parseMDX` and `stringifyMDX`. Here's how to use them:
 
