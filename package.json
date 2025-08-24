@@ -4,11 +4,11 @@
   "description": "A parser for MDX that converts MDX to MDAST, compatible with Slate and Plate.",
   "author": "SitePins",
   "typings": "./dist/index.d.ts",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "main": "./dist/index.browser.js",
+  "module": "./dist/index.browser.js",
   "browser": "./dist/index.browser.js",
   "type": "module",
-  "types": "./dist/index.d.ts",
   "sideEffects": false,
   "files": [
     "dist",
@@ -17,20 +17,8 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "browser": "./dist/index.browser.js",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "default": "./dist/index.mjs"
-    },
-    "./browser": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.browser.js",
-      "require": "./dist/index.browser.js",
-      "default": "./dist/index.browser.js"
-    },
-    "./types": "./dist/types.d.ts",
-    "./core/parser": "./dist/core/parser/index.d.ts",
-    "./core/stringify": "./dist/core/stringify/index.d.ts"
+      "import": "./dist/index.browser.js"
+    }
   },
   "repository": {
     "type": "git",
