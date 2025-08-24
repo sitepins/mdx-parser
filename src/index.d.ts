@@ -13,3 +13,4 @@ export declare function stringifyMDX(
 ): string;
 
 export * from "./core/parser/types/plateTypes";
+export * from "./types";

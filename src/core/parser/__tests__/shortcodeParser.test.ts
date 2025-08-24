@@ -1,3 +1,4 @@
+import { RichTextField, RichTextTemplate, StringField } from "@/types";
 import { describe, expect, it } from "vitest";
 import { shortcodeParser } from "../parsers/shortcodeParser";
 
@@ -13,14 +14,14 @@ describe("parseShortcode", () => {
 
   describe("with keyed field", () => {
     it("parses attributes", () => {
-      const template = {
+      const template: RichTextTemplate = {
         ...baseTemplate,
         fields: [
           {
             name: "foo",
             label: "foo label",
             type: "string",
-          },
+          } as StringField,
         ],
       };
 
@@ -31,14 +32,14 @@ describe("parseShortcode", () => {
 
   describe("with unkeyed attributes", () => {
     it("parses attributes", () => {
-      const template = {
+      const template: RichTextTemplate = {
         ...baseTemplate,
         fields: [
           {
             name: "_value",
             label: "Value",
             type: "string",
-          },
+          } as StringField,
         ],
       };
 
@@ -49,14 +50,14 @@ describe("parseShortcode", () => {
 
   describe("with children", () => {
     it("parses children field", () => {
-      const template = {
+      const template: RichTextTemplate = {
         ...baseTemplate,
         fields: [
           {
             name: "children",
             label: "children",
             type: "rich-text",
-          },
+          } as RichTextField,
         ],
       };
 

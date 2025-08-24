@@ -44,7 +44,7 @@
     "types": "tsc -p tsconfig.build.json",
     "build": "vite build",
     "build:browser": "vite build --config vite.browser.config.ts",
-    "build:all": "npm run build && npm run build:browser",
+    "build:all": "npm run types && npm run build && npm run build:browser",
     "prepare": "yarn build:all",
     "test": "vitest run",
     "test:watch": "vitest",

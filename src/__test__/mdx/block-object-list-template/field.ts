@@ -12,6 +12,7 @@ export const field: RichTextField = {
         {
           type: "object",
           name: "action",
+          fields: [], // Add empty fields array for ObjectField type requirement
           templates: [
             {
               label: "Popup",
