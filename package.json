@@ -1,6 +1,6 @@
 {
   "name": "@sitepins/mdx-parser",
-  "version": "1.0.1",
+  "version": "2.1.3",
   "description": "A parser for MDX that converts MDX to MDAST, compatible with Slate and Plate.",
   "author": "SitePins",
   "typings": "./dist/index.d.ts",
