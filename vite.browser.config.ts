@@ -14,7 +14,7 @@ export default defineConfig({
         "src/**/__tests__/**/*",
         "src/**/*.test.ts",
       ],
-      outDir: "dist",
+      outDir: "dist-browser",
       staticImport: true,
       tsconfigPath: "./tsconfig.build.json",
     }),
@@ -23,22 +23,15 @@ export default defineConfig({
     lib: {
       entry: "src/index.ts",
       name: "@sitepins/mdx-parser",
-      fileName: (format) => `index.browser.${format === "es" ? "js" : "js"}`,
+      fileName: "index.browser",
       formats: ["es"],
     },
     rollupOptions: {
       external: ["react", "react-dom"],
-      output: {
-        format: "es",
-        globals: {
-          react: "React",
-          "react-dom": "ReactDOM",
-        },
-      },
     },
     sourcemap: true,
     minify: false,
-    outDir: "dist",
+    outDir: "dist-browser",
   },
   assetsInclude: ["**/*.md"],
   resolve: {
@@ -46,8 +39,5 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       "^.*\\.md\\?raw$": "$&",
     },
-    extensions: [".ts", ".tsx", ".js", ".jsx", ".json"],
-    mainFields: ["module", "main"],
-    conditions: ["import", "module", "browser", "default"],
   },
 });

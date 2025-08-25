@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [
     dts({
       insertTypesEntry: true,
-      rollupTypes: false,
+      rollupTypes: true,
       copyDtsFiles: true,
       include: ["src/**/*.ts", "src/**/*.d.ts"],
     }),
@@ -15,18 +15,14 @@ export default defineConfig({
     lib: {
       entry: "src/index.ts",
       name: "@sitepins/mdx-parser",
-      fileName: (format) => {
-        if (format === "es") return "index.mjs";
-        if (format === "cjs") return "index.js";
-        return "index.js";
-      },
-      formats: ["es", "cjs"],
     },
     rollupOptions: {
       external: [
+        // All your dependencies should be external
         "acorn",
         "ccount",
         "estree-util-is-identifier-name",
+        "happy-dom",
         "lodash.flatten",
         "mdast-util-compact",
         "mdast-util-directive",
@@ -52,8 +48,23 @@ export default defineConfig({
         "unist-util-visit",
         "uvu",
         "vfile-message",
+        // React - external as peer dependency
         "react",
         "react-dom",
+        "react/jsx-runtime",
+        "react/jsx-dev-runtime",
+      ],
+      output: [
+        // ESM build - for Next.js, modern React apps, and Node.js ESM
+        {
+          format: "es",
+          entryFileNames: "index.mjs",
+        },
+        // CJS build - for older Node.js and legacy React apps
+        {
+          format: "cjs",
+          entryFileNames: "index.js",
+        },
       ],
     },
     sourcemap: true,
@@ -62,8 +73,7 @@ export default defineConfig({
   assetsInclude: ["**/*.md"],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
-      "^.*\\.md\\?raw$": "$&",
+      "@": path.resolve(process.cwd(), "./src"),
     },
   },
 });
