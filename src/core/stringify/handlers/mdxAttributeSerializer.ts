@@ -1,7 +1,7 @@
 import { RichTextType } from "@/types";
 import type * as Md from "mdast";
+import { processInlineNodes } from "../markdownMarksHandler";
 import { MdxJsxFlowElement, MdxJsxTextElement } from "../types";
-import { processInlineNodes } from "./markdownMarksHandler";
 
 // Interface for a standard MDX JSX attribute (string, boolean, number, or null)
 interface MdxJsxAttribute {

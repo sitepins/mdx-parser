@@ -1,2 +1,2 @@
-export * from "./markdownMarksHandler";
+export * from "../markdownMarksHandler";
 export * from "./mdxAttributeSerializer";
