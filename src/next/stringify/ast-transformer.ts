@@ -131,7 +131,10 @@ export const convertBlockElement = (
         firstChild &&
         ((firstChild as any).type === "text" ||
           (firstChild as any).type === "a" ||
-          (firstChild as any).type === "img")
+          (firstChild as any).type === "img" ||
+          (firstChild as any).type === "break" ||
+          (firstChild as any).type === "html_inline" ||
+          (firstChild as any).type === "mdxJsxTextElement")
       ) {
         // This is a flattened blockquote with direct inline elements
         return {
