@@ -320,19 +320,62 @@ export const convertBlockElement = (
         children,
       };
     case "blockquote":
-      return {
-        type: "blockquote",
-        children: [
-          {
-            type: "paragraph",
-            children: serializeInlineElements(
-              plateBlock.children,
-              richTextType,
-              mapImageUrl
-            ),
-          },
-        ],
-      };
+      // Handle both cases: blockquotes with direct inline elements (autoformatted)
+      // and blockquotes with block elements
+      const firstChild = plateBlock.children[0];
+
+      // Check if the first child is actually an inline element
+      const isInlineElement =
+        firstChild &&
+        ((firstChild as any).type === "text" ||
+          (firstChild as any).type === "a" ||
+          (firstChild as any).type === "img" ||
+          (firstChild as any).type === "break" ||
+          (firstChild as any).type === "html_inline" ||
+          (firstChild as any).type === "mdxJsxTextElement");
+
+      // Check if it's a block element that should NOT be treated as inline
+      const isBlockElement =
+        firstChild &&
+        ((firstChild as any).type === "p" ||
+          (firstChild as any).type === "h1" ||
+          (firstChild as any).type === "h2" ||
+          (firstChild as any).type === "h3" ||
+          (firstChild as any).type === "h4" ||
+          (firstChild as any).type === "h5" ||
+          (firstChild as any).type === "h6" ||
+          (firstChild as any).type === "blockquote" ||
+          (firstChild as any).type === "ul" ||
+          (firstChild as any).type === "ol" ||
+          (firstChild as any).type === "li" ||
+          (firstChild as any).type === "code_block" ||
+          (firstChild as any).type === "table" ||
+          (firstChild as any).type === "mdxJsxFlowElement");
+
+      if (isInlineElement && !isBlockElement) {
+        // This is a flattened blockquote with direct inline elements
+        return {
+          type: "blockquote",
+          children: [
+            {
+              type: "paragraph",
+              children: serializeInlineElements(
+                plateBlock.children as any as Plate.InlineElement[],
+                richTextType,
+                mapImageUrl
+              ),
+            },
+          ],
+        };
+      } else {
+        // This is a regular blockquote with block elements
+        return {
+          type: "blockquote",
+          children: plateBlock.children.map((child) =>
+            convertBlockContentElement(child, richTextType, mapImageUrl)
+          ),
+        };
+      }
     case "hr":
       return {
         type: "thematicBreak",

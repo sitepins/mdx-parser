@@ -124,19 +124,38 @@ export const convertBlockElement = (
         children: children,
       };
     case "blockquote":
-      return {
-        type: "blockquote",
-        children: [
-          {
-            type: "paragraph",
-            children: processInlineMarks(
-              plateBlock.children,
-              richTextField,
-              imageUrlMapper
-            ),
-          },
-        ],
-      };
+      // Handle both cases: blockquotes with direct inline elements (autoformatted)
+      // and blockquotes with block elements
+      const firstChild = plateBlock.children[0];
+      if (
+        firstChild &&
+        ((firstChild as any).type === "text" ||
+          (firstChild as any).type === "a" ||
+          (firstChild as any).type === "img")
+      ) {
+        // This is a flattened blockquote with direct inline elements
+        return {
+          type: "blockquote",
+          children: [
+            {
+              type: "paragraph",
+              children: processInlineMarks(
+                plateBlock.children as any as Plate.InlineElement[],
+                richTextField,
+                imageUrlMapper
+              ),
+            },
+          ],
+        };
+      } else {
+        // This is a regular blockquote with block elements
+        return {
+          type: "blockquote",
+          children: plateBlock.children.map((child) =>
+            convertBlockContentElement(child, richTextField, imageUrlMapper)
+          ),
+        };
+      }
     case "hr":
       return {
         type: "thematicBreak",

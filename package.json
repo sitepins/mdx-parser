@@ -43,7 +43,8 @@
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
     "dev": "vite build --watch",
-    "clean": "rm -rf dist dist-browser"
+    "clean": "rm -rf dist dist-browser",
+    "setup": "yarn unlink; yarn build; yarn link"
   },
   "dependencies": {
     "acorn": "8.8.2",

@@ -30,6 +30,7 @@ When developing or testing this package locally, you can use `yarn link` to crea
 #### Linking the Package (Development Mode)
 
 1. **In the package directory** (this repository):
+
    ```bash
    # Navigate to the package directory
    cd /path/to/mdx-parser
@@ -39,6 +40,7 @@ When developing or testing this package locally, you can use `yarn link` to crea
    ```
 
 2. **In your project directory** (where you want to use the linked package):
+
    ```bash
    # Navigate to your project
    cd /path/to/your-project
@@ -52,6 +54,7 @@ When developing or testing this package locally, you can use `yarn link` to crea
 When you're done testing or want to use the published version:
 
 1. **In your project directory**:
+
    ```bash
    # Unlink the package
    yarn unlink @sitepins/mdx-parser
@@ -61,6 +64,7 @@ When you're done testing or want to use the published version:
    ```
 
 2. **In the package directory** (optional):
+
    ```bash
    # Remove the global link
    yarn unlink
@@ -155,8 +159,10 @@ const output = stringifyMDX(
 ### 3. Function Parameters
 
 #### parseMDX(value, field, imageCallback)
+
 - `value`: (string) The MDX/Markdown content to parse
 - `field`: (RichTextType) Configuration object:
+
   ```typescript
   {
     type: "rich-text";
@@ -167,7 +173,9 @@ const output = stringifyMDX(
     };
   }
   ```
+
 - `imageCallback`: (function) Process image URLs before parsing
+
   ```typescript
   (imageUrl: string) => string
   ```
@@ -252,8 +260,10 @@ The library provides two build variants:
 The browser bundle automatically includes all necessary dependencies, making it perfect for React applications.
 
 #### stringifyMDX(rootElement, richTextField, mapImageUrl)
+
 - `rootElement`: (Plate.RootElement) The AST to convert back to MDX
 - `richTextField`: (RichTextField) Configuration object:
+
   ```typescript
   {
     type: "rich-text";
@@ -265,7 +275,9 @@ The browser bundle automatically includes all necessary dependencies, making it 
     };
   }
   ```
+
 - `mapImageUrl`: (function) Process image URLs during stringification
+
   ```typescript
   (imageUrl: string) => string
   ```
@@ -284,12 +296,14 @@ export const parseMDX = (
 ): Plate.RootElement => {}
 ```
 
-#### Parameters:
+#### Parameters
+
 - `value`: The MDX/Markdown string to parse
 - `field`: Configuration object for the parser
 - `imageCallback`: Function to process image URLs
 
-#### RichTextType Interface:
+#### RichTextType Interface
+
 ```typescript
 export interface RichTextType<WithNamespace extends boolean = false>
   extends BaseField {
@@ -302,7 +316,7 @@ export interface RichTextType<WithNamespace extends boolean = false>
 }
 ```
 
-#### Basic Usage:
+#### Basic Usage
 
 ```typescript
 import { parseMDX } from '@sitepins/mdx-parser';
@@ -335,12 +349,14 @@ export const stringifyMDX = (
 ) 
 ```
 
-#### Parameters:
+#### Parameters
+
 - `rootElement`: The root AST node to stringify
 - `richTextField`: Configuration object for the stringification
 - `mapImageUrl`: Function to process image URLs
 
-#### RichTextField Interface:
+#### RichTextField Interface
+
 ```typescript
 export interface RichTextField extends BaseField {
   type: "rich-text";
@@ -353,7 +369,7 @@ export interface RichTextField extends BaseField {
 }
 ```
 
-#### Example:
+#### Example
 
 ```typescript
 import { parseMDX, stringifyMDX } from '@sitepins/mdx-parser';
@@ -503,12 +519,13 @@ const result = parseMDX(content, {
 }, url => url);
 ```
 
-const result = parseMDX(content, { 
+const result = parseMDX(content, {
   type: "rich-text",
   parser: {
     type: "markdown"
   }
 }, url => url);
+
 ```
 
 ### Complex Example with Components

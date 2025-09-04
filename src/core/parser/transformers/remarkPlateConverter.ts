@@ -442,13 +442,32 @@ export const remarkToSlate = (
 
   // Convert blockquote node
   const blockquote = (node: Md.Blockquote): Plate.BlockquoteElement => {
-    const children: Plate.InlineElement[] = [];
+    const children: Plate.BlockElement[] = [];
+
+    // Check if this is a single paragraph/heading that should be autoformatted
+    const shouldAutoformat =
+      node.children.length === 1 &&
+      (node.children[0].type === "heading" ||
+        node.children[0].type === "paragraph");
+
     node.children.forEach((child) => {
       const inlineElements = unwrapBlockContent(child);
-      inlineElements.forEach((el) => {
-        children.push(el);
-      });
+
+      if (
+        shouldAutoformat &&
+        (child.type === "heading" || child.type === "paragraph")
+      ) {
+        // For single paragraph/heading, create blockquote with direct inline elements (autoformat)
+        (children as any).push(...inlineElements);
+      } else {
+        // For multiple paragraphs or other content, preserve block structure
+        children.push({
+          type: "p",
+          children: inlineElements,
+        });
+      }
     });
+
     return {
       type: "blockquote",
       children,

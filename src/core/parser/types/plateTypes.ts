@@ -5,7 +5,7 @@ export type RootElement = {
 
 export type BlockquoteElement = {
   type: "blockquote";
-  children: InlineElement[];
+  children: BlockElement[];
 };
 
 export type CodeBlockElement = {
